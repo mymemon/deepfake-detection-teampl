@@ -78,23 +78,6 @@ for file in val_files:
         shutil.copy(os.path.join
 
 
-# Step 1: Extract frames
-extracted_frame_count = extract_frames(video_path, output_folder, frame_count)
-
-
-extracted_frame_count = extract_frames(video_path, output_folder
-
-extracted_frame_count = extract
-
-
-# Step 2: Split the extracted frames into train and validation folders
-split_data(output_folder, train_folder, val_folder, split_ratio)
-
-extracted_frame_count, 
-split_data(output_folder, train_folder, val_folder, split_ratio)
-
-extracted_frame_count
-
 split_data(output_folder, train_folder, val_folder, split
 
 split_data(output_folder, train
