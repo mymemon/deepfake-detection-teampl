@@ -1,7 +1,18 @@
 # deepfake-detection-teampl
 import cv2
 import os
+import shutil
+import random
 
+# Paths and parameters
+video_path = '/mnt/data/aaqaifqrwn.mp4'  # Uploaded video path
+output_folder = '/mnt/data/extracted_frames'  # Folder to save frames
+frame_count = 5  # Number of frames to extract
+train_folder = '/mnt/data/train_frames'  # Folder for training data
+val_folder = '/mnt/data/val_frames'  # Folder for validation data
+split_ratio = 0.8  # 80% train, 20% validation
+
+# Function to extract frames from video
 def extract_frames(video_path, output_folder, frame_count=5):
     cap = cv2.VideoCapture(video_path)
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -25,41 +36,9 @@ def extract_frames(video_path, output_folder, frame_count=5):
         frame_number += 1
 
     cap.release()
-    print(f"Extracted {saved_frames} frames from {video_path}.")
-    
-video_path = 'FaceForensics++/original_sequences/youtube/video.mp4'  
-output_folder = 'FaceForensics++/frames/original_sequences/youtube' 
-extract_frames(video_path, output_folder, frame_count=5)
+    return saved_frames
 
-
-extract_frames(video_path, output_folder, frame_count=5)
-
-from PIL import Image
-
-def resize_image(image_path, output_size=(64, 64)):
-    with Image.open(image_path) as img:
-        img_resized = img.resize(output_size)
-        img_resized.save(image_path)
-
-frame_folder = 'FaceForensics++/frames/original_sequences/youtube/video1'
-frame_paths = get_frame_paths(frame_folder)
-
-resize_image(frame_path)
-
-from PIL import Image
-
-def resize_image(image_path, output_size=(64, 64)):
-    with Image.open(image_path) as img:
-        img_resized = img.resize(output_size)
-        img_resized.save(image_path)
-
-frame_path = 'path/to/your/frame.jpg' 
-resize_image(frame_path)
-
-import shutil
-import random
-import os
-
+# Function to split data into training and validation folders
 def split_data(input_folder, train_folder, val_folder, split_ratio=0.8):
     files = os.listdir(input_folder)
     random.shuffle(files)
@@ -68,17 +47,57 @@ def split_data(input_folder, train_folder, val_folder, split_ratio=0.8):
     train_files = files[:split_index]
     val_files = files[split_index:]
 
-    os.makedirs(train_folder, exist_ok=True)
-    os.makedirs(val_folder, exist_ok=True)
+    os.makedirs(train_folder, exist_ok=
+    train_files = files[:split_index]
+    val_files = files[split_index:]
 
-    for file in train_files:
-        shutil.move(os.path.join(input_folder, file), train_folder)
+    os.makedirs
+True)
+    os.makedirs(val_folder, exist_ok=
+    os.makedirs(val
+True)
 
-    for file in val_files:
-        shutil.move(os.path.join(input_folder, file), val_folder)
+    
 
 
-input_folder = 'path/to/your/frame.jpg'     
-train_folder = "C:\Users\user\Downloads\models.py"       
-val_folder = "C:\Users\user\Downloads\transform.py"         
-split_data(input_folder, train_folder, val_folder)
+for file in train_files:
+        shutil.copy(os.path.join(input_folder, file), train_folder)
+
+    
+        shutil.copy(os.path.join(input_folder, file),
+
+        shutil.copy(os.path
+for file in val_files:
+        shutil.copy(os.path.join(input_folder, file), val_folder)
+
+
+        shutil.copy(os.path.join(input_folder, file),
+
+        shutil.copy(os.path.join(input_folder,
+
+        shutil.copy(os.path.join
+
+
+# Step 1: Extract frames
+extracted_frame_count = extract_frames(video_path, output_folder, frame_count)
+
+
+extracted_frame_count = extract_frames(video_path, output_folder
+
+extracted_frame_count = extract
+
+
+# Step 2: Split the extracted frames into train and validation folders
+split_data(output_folder, train_folder, val_folder, split_ratio)
+
+extracted_frame_count, 
+split_data(output_folder, train_folder, val_folder, split_ratio)
+
+extracted_frame_count
+
+split_data(output_folder, train_folder, val_folder, split
+
+split_data(output_folder, train
+
+
+len(os.listdir(train_folder)), len(os.listdir(val_folder))
