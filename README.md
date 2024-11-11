@@ -2,16 +2,17 @@ import cv2
 import os
 import shutil
 import random
+from PIL import Image
 
-# Paths and parameters
-new_video_path = '/mnt/data/aaqaifqrwn.mp4'
-new_output_folder = '/mnt/data/new_extracted_frames'
-frame_count = 5
-new_train_folder = '/mnt/data/new_train_frames'
-new_val_folder = '/mnt/data/new_val_frames'
-split_ratio = 0.8
+# 설정된 경로 및 파라미터
+video_path = '/mnt/data/aaqaifqrwn.mp4'  
+output_folder = '/mnt/data/extracted_frames'  
+train_folder = '/mnt/data/train_frames'  
+val_folder = '/mnt/data/val_frames'  
+frame_count = 5 
+split_ratio = 0.8 
 
-# Function to extract frames from video
+# 비디오에서 프레임을 추출하는 함수
 def extract_frames(video_path, output_folder, frame_count=5):
     cap = cv2.VideoCapture(video_path)
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -37,7 +38,13 @@ def extract_frames(video_path, output_folder, frame_count=5):
     cap.release()
     return saved_frames
 
-# Function to split data into training and validation folders
+# 프레임 이미지를 리사이즈하는 함수
+def resize_image(image_path, output_size=(64, 64)):
+    with Image.open(image_path) as img:
+        img_resized = img.resize(output_size)
+        img_resized.save(image_path)
+
+# 학습 및 검증 데이터를 분할하는 함수
 def split_data(input_folder, train_folder, val_folder, split_ratio=0.8):
     files = os.listdir(input_folder)
     random.shuffle(files)
@@ -55,11 +62,17 @@ def split_data(input_folder, train_folder, val_folder, split_ratio=0.8):
     for file in val_files:
         shutil.copy(os.path.join(input_folder, file), val_folder)
 
-# Frame extraction and data splitting
-extracted_frame_count = extract_frames(new_video_path, new_output_folder, frame_count)
-split_data(new_output_folder, new_train_folder, new_val_folder, split_ratio)
+# 프레임 추출 및 리사이즈 수행
+extracted_frame_count = extract_frames(video_path, output_folder, frame_count)
 
-# Output the results
+# 리사이즈 작업 수행
+for frame_file in os.listdir(output_folder):
+    resize_image(os.path.join(output_folder, frame_file), output_size=(64, 64))
+
+# 학습 및 검증 데이터 분할
+split_data(output_folder, train_folder, val_folder, split_ratio)
+
+# 결과 출력
 print(f"Extracted frames: {extracted_frame_count}")
-print(f"Training frames: {len(os.listdir(new_train_folder))}")
-print(f"Validation frames: {len(os.listdir(new_val_folder))}")
+print(f"Training frames: {len(os.listdir(train_folder))}")
+print(f"Validation frames: {len(os.listdir(val_folder))}")
