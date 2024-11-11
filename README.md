@@ -4,12 +4,6 @@ import os
 import shutil
 import random
 
-# Paths and parameters for the new video file
-import cv2
-import os
-import shutil
-import random
-
 # Re-defining paths and parameters
 new_video_path = '/mnt/data/aaqaifqrwn.mp4'  # Uploaded video path for new file
 new_output_folder = '/mnt/data/new_extracted_frames'  # Folder to save frames for the new video
