@@ -72,10 +72,6 @@ for frame_file in os.listdir(output_folder):
 
 ----------------------------------------------------------------------------------------------------------
 
-
-pip install torch torchvision pillow opencv-python
-
-
 import os
 import cv2
 import torch
@@ -88,7 +84,7 @@ from torchvision import datasets, transforms, models
 from torch.utils.data import DataLoader
 
 # 설정된 경로 및 파라미터
-video_path = 'your_video.mp4'  # 로컬에 있는 비디오 파일 경로
+video_path = 'aaqaifqrwn.mp4'  
 output_folder = 'extracted_frames'
 train_folder = 'train_frames'
 val_folder = 'val_frames'
@@ -144,6 +140,22 @@ def split_data(input_folder, train_folder, val_folder, split_ratio=0.8):
 
     for file in val_files:
         shutil.copy(os.path.join(input_folder, file), val_folder)
+
+# Inference Function
+def infer(model, image_path):
+    model.eval()  # Set model to evaluation mode
+    image = Image.open(image_path)
+    transform = transforms.Compose([
+        transforms.Resize((64, 64)),
+        transforms.ToTensor(),
+    ])
+    image_tensor = transform(image).unsqueeze(0)  # Add batch dimension
+
+    with torch.no_grad():
+        outputs = model(image_tensor)
+        _, predicted = torch.max(outputs, 1)
+    
+    return predicted.item(), model.classes[predicted.item()]
 
 # 프레임 추출, 리사이즈, 데이터 분할 수행
 extracted_frame_count = extract_frames(video_path, output_folder, frame_count)
@@ -208,7 +220,6 @@ def validate_model(model, val_loader, criterion):
 # 모델 학습 및 검증 실행
 train_model(model, train_loader, criterion, optimizer, num_epochs=5)
 validate_model(model, val_loader, criterion)
-
 
 # 학습 및 검증 데이터 분할
 split_data(output_folder, train_folder, val_folder, split_ratio)
