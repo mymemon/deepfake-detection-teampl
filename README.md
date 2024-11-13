@@ -5,12 +5,12 @@ import random
 from PIL import Image
 
 # 설정된 경로 및 파라미터
-video_path = '/mnt/data/aaqaifqrwn.mp4'  
-output_folder = '/mnt/data/extracted_frames'  
-train_folder = '/mnt/data/train_frames'  
-val_folder = '/mnt/data/val_frames'  
-frame_count = 5 
-split_ratio = 0.8 
+video_path = '/mnt/data/aaqaifqrwn.mp4'
+output_folder = '/mnt/data/extracted_frames'
+train_folder = '/mnt/data/train_frames'
+val_folder = '/mnt/data/val_frames'
+frame_count = 5
+split_ratio = 0.8
 
 # 비디오에서 프레임을 추출하는 함수
 def extract_frames(video_path, output_folder, frame_count=5):
@@ -73,6 +73,4 @@ for frame_file in os.listdir(output_folder):
 split_data(output_folder, train_folder, val_folder, split_ratio)
 
 # 결과 출력
-print(f"Extracted frames: {extracted_frame_count}")
-print(f"Training frames: {len(os.listdir(train_folder))}")
-print(f"Validation frames: {len(os.listdir(val_folder))}")
+extracted_frame_count, len(os.listdir(train_folder)), len(os.listdir(val_folder))
