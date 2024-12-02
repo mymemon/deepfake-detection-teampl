@@ -82,6 +82,8 @@ import torch.optim as optim
 from PIL import Image
 from torchvision import datasets, transforms, models
 from torch.utils.data import DataLoader
+import os
+import shutil
 
 # 설정된 경로 및 파라미터
 video_path = 'aaqaifqrwn.mp4'  
@@ -223,6 +225,34 @@ validate_model(model, val_loader, criterion)
 
 # 학습 및 검증 데이터 분할
 split_data(output_folder, train_folder, val_folder, split_ratio)
+
+# 클래스별 데이터 분류 함수
+def organize_data(input_folder, train_folder, val_folder, classes):
+    for cls in classes:
+        os.makedirs(os.path.join(train_folder, cls), exist_ok=True)
+        os.makedirs(os.path.join(val_folder, cls), exist_ok=True)
+
+        # 클래스에 따라 파일 이동
+        class_files = [f for f in os.listdir(input_folder) if cls in f]
+        split_index = int(len(class_files) * split_ratio)
+        train_files = class_files[:split_index]
+        val_files = class_files[split_index:]
+
+        for file in train_files:
+            shutil.move(os.path.join(input_folder, file), os.path.join(train_folder, cls))
+
+        for file in val_files:
+            shutil.move(os.path.join(input_folder, file), os.path.join(val_folder, cls))
+            
+# 클래스 이름 정의
+classes = ['real', 'fake']
+
+# 데이터 정리 실행
+organize_data(output_folder, train_folder, val_folder, classes)
+
+train_data = datasets.ImageFolder(train_folder, transform=train_transform)
+val_data = datasets.ImageFolder(val_folder, transform=train_transform)
+
 
 # 결과 출력
 extracted_frame_count, len(os.listdir(train_folder)), len(os.listdir(val_folder))
