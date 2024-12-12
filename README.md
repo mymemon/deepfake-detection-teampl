@@ -5,69 +5,100 @@ import random
 from PIL import Image
 
 # 설정된 경로 및 파라미터
-video_path = '/mnt/data/aaqaifqrwn.mp4'
-output_folder = '/mnt/data/extracted_frames'
-train_folder = '/mnt/data/train_frames'
-val_folder = '/mnt/data/val_frames'
-frame_count = 5
-split_ratio = 0.8
+video_path = '/mnt/data/aaqaifqrwn.mp4'  # 비디오 파일 경로
+output_folder = '/mnt/data/extracted_frames'  # 프레임이 저장될 폴더
+train_folder = '/mnt/data/train_frames'  # 학습 데이터가 저장될 폴더
+val_folder = '/mnt/data/val_frames'  # 검증 데이터가 저장될 폴더
+frame_count = 5  # 추출할 프레임 수
+split_ratio = 0.8  # 학습 데이터와 검증 데이터 분할 비율
 
 # 비디오에서 프레임을 추출하는 함수
 def extract_frames(video_path, output_folder, frame_count=5):
-    cap = cv2.VideoCapture(video_path)
-    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    interval = max(total_frames // frame_count, 1)
+    """
+    비디오 파일에서 특정 간격으로 프레임을 추출하여 저장합니다.
+
+    Args:
+        video_path (str): 비디오 파일 경로.
+        output_folder (str): 프레임이 저장될 폴더.
+        frame_count (int): 저장할 프레임 수.
+
+    Returns:
+        int: 저장된 프레임 개수.
+    """
+    cap = cv2.VideoCapture(video_path)  # 비디오 캡처 객체 생성
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))  # 총 프레임 수 계산
+    interval = max(total_frames // frame_count, 1)  # 프레임 추출 간격 계산
 
     frame_number = 0
     saved_frames = 0
-    video_name = os.path.splitext(os.path.basename(video_path))[0]
-    os.makedirs(output_folder, exist_ok=True)
+    video_name = os.path.splitext(os.path.basename(video_path))[0]  # 비디오 파일 이름 추출
+    os.makedirs(output_folder, exist_ok=True)  # 출력 폴더 생성
 
     while cap.isOpened() and saved_frames < frame_count:
-        ret, frame = cap.read()
-        if not ret:
+        ret, frame = cap.read()  # 비디오에서 프레임 읽기
+        if not ret:  # 읽기 실패 시 루프 종료
             break
 
-        if frame_number % interval == 0:
+        if frame_number % interval == 0:  # 지정 간격마다 프레임 저장
             frame_filename = os.path.join(output_folder, f"{video_name}_frame_{saved_frames}.jpg")
-            cv2.imwrite(frame_filename, frame)
-            saved_frames += 1
+            cv2.imwrite(frame_filename, frame)  # 프레임을 이미지로 저장
+            saved_frames += 1  # 저장된 프레임 개수 증가
 
-        frame_number += 1
+        frame_number += 1  # 다음 프레임으로 이동
 
-    cap.release()
+    cap.release()  # 비디오 객체 해제
     return saved_frames
 
 # 프레임 이미지를 리사이즈하는 함수
 def resize_image(image_path, output_size=(64, 64)):
-    with Image.open(image_path) as img:
-        img_resized = img.resize(output_size)
-        img_resized.save(image_path)
+    """
+    이미지 파일의 크기를 지정된 크기로 리사이즈합니다.
+
+    Args:
+        image_path (str): 이미지 파일 경로.
+        output_size (tuple): 리사이즈할 크기 (가로, 세로).
+    """
+    with Image.open(image_path) as img:  # 이미지 열기
+        img_resized = img.resize(output_size)  # 이미지 크기 조정
+        img_resized.save(image_path)  # 리사이즈된 이미지 저장
 
 # 학습 및 검증 데이터를 분할하는 함수
 def split_data(input_folder, train_folder, val_folder, split_ratio=0.8):
-    files = os.listdir(input_folder)
-    random.shuffle(files)
+    """
+    추출된 프레임 데이터를 학습 데이터와 검증 데이터로 분할합니다.
 
-    split_index = int(len(files) * split_ratio)
-    train_files = files[:split_index]
-    val_files = files[split_index:]
+    Args:
+        input_folder (str): 입력 데이터 폴더.
+        train_folder (str): 학습 데이터 폴더.
+        val_folder (str): 검증 데이터 폴더.
+        split_ratio (float): 학습 데이터와 검증 데이터 분할 비율.
+    """
+    files = os.listdir(input_folder)  # 입력 폴더에서 파일 목록 가져오기
+    random.shuffle(files)  # 파일 목록 섞기
 
-    os.makedirs(train_folder, exist_ok=True)
-    os.makedirs(val_folder, exist_ok=True)
+    split_index = int(len(files) * split_ratio)  # 학습/검증 분할 기준 계산
+    train_files = files[:split_index]  # 학습 데이터 파일
+    val_files = files[split_index:]  # 검증 데이터 파일
 
-    for file in train_files:
+    os.makedirs(train_folder, exist_ok=True)  # 학습 데이터 폴더 생성
+    os.makedirs(val_folder, exist_ok=True)  # 검증 데이터 폴더 생성
+
+    for file in train_files:  # 학습 데이터로 복사
         shutil.copy(os.path.join(input_folder, file), train_folder)
 
-    for file in val_files:
+    for file in val_files:  # 검증 데이터로 복사
         shutil.copy(os.path.join(input_folder, file), val_folder)
 
 # 프레임 추출 및 리사이즈 수행
-extracted_frame_count = extract_frames(video_path, output_folder, frame_count)
+extracted_frame_count = extract_frames(video_path, output_folder, frame_count)  # 프레임 추출
 
-# 리사이즈 작업 수행
+# 추출된 프레임 리사이즈
 for frame_file in os.listdir(output_folder):
     resize_image(os.path.join(output_folder, frame_file), output_size=(64, 64))
+
+# 학습/검증 데이터 분할
+split_data(output_folder, train_folder, val_folder, split_ratio)
+
 
 
 ----------------------------------------------------------------------------------------------------------
