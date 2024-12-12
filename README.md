@@ -11,7 +11,7 @@ train_folder = '/mnt/data/train_frames'
 val_folder = '/mnt/data/val_frames'
 frame_count = 5
 split_ratio = 0.8
-...
+'''
 # 비디오에서 프레임을 추출하는 함수
 def extract_frames(video_path, output_folder, frame_count=5):
 
