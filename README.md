@@ -14,6 +14,17 @@ split_ratio = 0.8
 
 # 비디오에서 프레임을 추출하는 함수
 def extract_frames(video_path, output_folder, frame_count=5):
+"""
+    비디오 파일에서 특정 간격으로 프레임을 추출하여 저장합니다.
+
+    Args:
+        video_path (str): 비디오 파일 경로.
+        output_folder (str): 프레임이 저장될 폴더 경로.
+        frame_count (int): 추출할 프레임 개수.
+
+    Returns:
+        int: 저장된 프레임의 총 개수.
+    """
     cap = cv2.VideoCapture(video_path)
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     interval = max(total_frames // frame_count, 1)
