@@ -97,32 +97,35 @@ import shutil
 
 # 설정된 경로 및 파라미터
 ```
-video_path = 'aaqaifqrwn.mp4'  
-output_folder = 'extracted_frames'
-train_folder = 'train_frames'
-val_folder = 'val_frames'
-frame_count = 10
-split_ratio = 0.8
+video_path = 'aaqaifqrwn.mp4'  # 입력 비디오 경로
+output_folder = 'extracted_frames'  # 추출된 프레임 저장 폴더
+train_folder = 'train_frames'  # 학습 데이터 저장 폴더
+val_folder = 'val_frames'  # 검증 데이터 저장 폴더
+frame_count = 10  # 추출할 프레임 수
+split_ratio = 0.8  # 학습/검증 데이터 분할 비율
 ```
 
 # 비디오에서 프레임을 추출하는 함수
 ```
 def extract_frames(video_path, output_folder, frame_count=10):
+    """
+    비디오에서 일정 간격으로 프레임 추출 및 저장.
+    """
     cap = cv2.VideoCapture(video_path)
-    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    interval = max(total_frames // frame_count, 1)
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))    # 비디오의 총 프레임 수
+    interval = max(total_frames // frame_count, 1)    # 프레임 간격 계산
 
     frame_number = 0
     saved_frames = 0
     video_name = os.path.splitext(os.path.basename(video_path))[0]
-    os.makedirs(output_folder, exist_ok=True)
+    os.makedirs(output_folder, exist_ok=True)   # 출력 폴더 생성
 
     while cap.isOpened() and saved_frames < frame_count:
         ret, frame = cap.read()
-        if not ret:
+        if not ret:   # 비디오 끝에 도달하면 중지
             break
 
-        if frame_number % interval == 0:
+        if frame_number % interval == 0:   # 간격에 따라 프레임 저장
             frame_filename = os.path.join(output_folder, f"{video_name}_frame_{saved_frames}.jpg")
             cv2.imwrite(frame_filename, frame)
             saved_frames += 1
@@ -130,12 +133,15 @@ def extract_frames(video_path, output_folder, frame_count=10):
         frame_number += 1
 
     cap.release()
-    return saved_frames
+    return saved_frames   # 저장된 프레임 수 반환
 ```
 
 # 프레임 이미지를 리사이즈하는 함수
 ```
 def resize_image(image_path, output_size=(64, 64)):
+    """
+    이미지 크기를 (64x64)로 리사이즈.
+    """
     with Image.open(image_path) as img:
         img_resized = img.resize(output_size)
         img_resized.save(image_path)
@@ -147,35 +153,37 @@ def split_data(input_folder, train_folder, val_folder, split_ratio=0.8):
     files = os.listdir(input_folder)
     random.shuffle(files)
 
-    split_index = int(len(files) * split_ratio)
+    split_index = int(len(files) * split_ratio)   # 분할 지점 계산
     train_files = files[:split_index]
     val_files = files[split_index:]
 
     os.makedirs(train_folder, exist_ok=True)
     os.makedirs(val_folder, exist_ok=True)
 
-    for file in train_files:
+    for file in train_files:   # 학습 데이터 복사
         shutil.copy(os.path.join(input_folder, file), train_folder)
 
-    for file in val_files:
+    for file in val_files:   # 검증 데이터 복사
         shutil.copy(os.path.join(input_folder, file), val_folder)
 ```
 
 # Inference Function
 ```
 def infer(model, image_path):
-    model.eval()  # Set model to evaluation mode
+    """
+    주어진 이미지에 대해 모델 추론 수행.
+    """
+    model.eval()  
     image = Image.open(image_path)
     transform = transforms.Compose([
         transforms.Resize((64, 64)),
         transforms.ToTensor(),
     ])
-    image_tensor = transform(image).unsqueeze(0)  # Add batch dimension
+    image_tensor = transform(image).unsqueeze(0)  # 배치 차원 추가
 
-    with torch.no_grad():
+    with torch.no_grad():     # 그래디언트 계산 비활성화
         outputs = model(image_tensor)
-        _, predicted = torch.max(outputs, 1)
-    
+        _, predicted = torch.max(outputs, 1)   # 예측 클래스
     return predicted.item(), model.classes[predicted.item()]
 ```
 
@@ -204,7 +212,7 @@ val_loader = DataLoader(val_data, batch_size=4, shuffle=False)
 # 간단한 모델
 ```
 model = models.resnet18(pretrained=True)
-model.fc = nn.Linear(model.fc.in_features, len(train_data.classes))
+model.fc = nn.Linear(model.fc.in_features, len(train_data.classes))   # 출력 레이어 수정
 ```
 
 # 손실 함수와 옵티마이저 설정
@@ -216,15 +224,18 @@ optimizer = optim.Adam(model.parameters(), lr=0.001)
 # 학습 함수
 ```
 def train_model(model, train_loader, criterion, optimizer, num_epochs=5):
+    """
+    모델 학습 수행.
+    """
     model.train()
     for epoch in range(num_epochs):
         running_loss = 0.0
         for images, labels in train_loader:
-            optimizer.zero_grad()
-            outputs = model(images)
-            loss = criterion(outputs, labels)
-            loss.backward()
-            optimizer.step()
+            optimizer.zero_grad()    # 이전 그래디언트 초기화
+            outputs = model(images)   # 모델 출력
+            loss = criterion(outputs, labels)   # 손실 계산
+            loss.backward()    # 그래디언트 계산
+            optimizer.step()    # 가중치 업데이트
 
             running_loss += loss.item() * images.size(0)
 
@@ -235,6 +246,9 @@ def train_model(model, train_loader, criterion, optimizer, num_epochs=5):
 # 검증 함수
 ```
 def validate_model(model, val_loader, criterion):
+    """
+    검증 데이터로 모델 평가.
+    """
     model.eval()
     running_loss = 0.0
     correct = 0
@@ -265,6 +279,9 @@ split_data(output_folder, train_folder, val_folder, split_ratio)
 # 클래스별 데이터 분류 함수
 ```
 def organize_data(input_folder, train_folder, val_folder, classes):
+ """
+    데이터셋을 클래스별로 학습/검증 폴더로 정리.
+    """
     for cls in classes:
         os.makedirs(os.path.join(train_folder, cls), exist_ok=True)
         os.makedirs(os.path.join(val_folder, cls), exist_ok=True)
