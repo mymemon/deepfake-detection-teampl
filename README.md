@@ -31,15 +31,15 @@ def extract_frames(video_path, output_folder, frame_count=5):
         if not ret:
             break
 
-        if frame_number % interval == 0:
+        if frame_number % interval == 0:   # 설정된 간격에 따라 프레임 저장
             frame_filename = os.path.join(output_folder, f"{video_name}_frame_{saved_frames}.jpg")
-            cv2.imwrite(frame_filename, frame)
+            cv2.imwrite(frame_filename, frame)  # 프레임 이미지를 파일로 저장
             saved_frames += 1
 
         frame_number += 1
 
     cap.release()
-    return saved_frames
+    return saved_frames   # 저장된 프레임 개수 반환
 ```
 # 프레임 이미지를 리사이즈하는 함수
 ```
