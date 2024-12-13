@@ -1,20 +1,21 @@
+```
 import cv2
 import os
 import shutil
 import random
 from PIL import Image
-
+```
 # 설정된 경로 및 파라미터.
-
+```
 video_path = '/mnt/data/aaqaifqrwn.mp4'
 output_folder = '/mnt/data/extracted_frames'
 train_folder = '/mnt/data/train_frames'
 val_folder = '/mnt/data/val_frames'
 frame_count = 5
 split_ratio = 0.8
-
+```
 # 비디오에서 프레임을 추출하는 함수
-```python
+```
 def extract_frames(video_path, output_folder, frame_count=5):
     cap = cv2.VideoCapture(video_path)
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
