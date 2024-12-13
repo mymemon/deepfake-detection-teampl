@@ -107,10 +107,7 @@ split_ratio = 0.8  # 학습/검증 데이터 분할 비율
 
 # 비디오에서 프레임을 추출하는 함수
 ```
-def extract_frames(video_path, output_folder, frame_count=10):
-    """
-    비디오에서 일정 간격으로 프레임 추출 및 저장.
-    """
+def extract_frames(video_path, output_folder, frame_count=10):    #비디오에서 일정 간격으로 프레임 추출 및 저장.
     cap = cv2.VideoCapture(video_path)
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))    # 비디오의 총 프레임 수
     interval = max(total_frames // frame_count, 1)    # 프레임 간격 계산
@@ -138,10 +135,7 @@ def extract_frames(video_path, output_folder, frame_count=10):
 
 # 프레임 이미지를 리사이즈하는 함수
 ```
-def resize_image(image_path, output_size=(64, 64)):
-    """
-    이미지 크기를 (64x64)로 리사이즈.
-    """
+def resize_image(image_path, output_size=(64, 64)):    #이미지 크기를 (64x64)로 리사이즈.
     with Image.open(image_path) as img:
         img_resized = img.resize(output_size)
         img_resized.save(image_path)
@@ -169,10 +163,7 @@ def split_data(input_folder, train_folder, val_folder, split_ratio=0.8):
 
 # Inference Function
 ```
-def infer(model, image_path):
-    """
-    주어진 이미지에 대해 모델 추론 수행.
-    """
+def infer(model, image_path):    #주어진 이미지에 대해 모델 추론 수행.
     model.eval()  
     image = Image.open(image_path)
     transform = transforms.Compose([
@@ -223,10 +214,7 @@ optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 # 학습 함수
 ```
-def train_model(model, train_loader, criterion, optimizer, num_epochs=5):
-    """
-    모델 학습 수행.
-    """
+def train_model(model, train_loader, criterion, optimizer, num_epochs=5):    #모델 학습 수행.
     model.train()
     for epoch in range(num_epochs):
         running_loss = 0.0
@@ -245,10 +233,7 @@ def train_model(model, train_loader, criterion, optimizer, num_epochs=5):
 
 # 검증 함수
 ```
-def validate_model(model, val_loader, criterion):
-    """
-    검증 데이터로 모델 평가.
-    """
+def validate_model(model, val_loader, criterion):       #검증 데이터로 모델 평가.
     model.eval()
     running_loss = 0.0
     correct = 0
@@ -278,10 +263,7 @@ split_data(output_folder, train_folder, val_folder, split_ratio)
 
 # 클래스별 데이터 분류 함수
 ```
-def organize_data(input_folder, train_folder, val_folder, classes):
- """
-    데이터셋을 클래스별로 학습/검증 폴더로 정리.
-    """
+def organize_data(input_folder, train_folder, val_folder, classes):       #데이터셋을 클래스별로 학습/검증 폴더로 정리.
     for cls in classes:
         os.makedirs(os.path.join(train_folder, cls), exist_ok=True)
         os.makedirs(os.path.join(val_folder, cls), exist_ok=True)
