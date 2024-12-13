@@ -14,7 +14,7 @@ frame_count = 5
 split_ratio = 0.8
 
 # 비디오에서 프레임을 추출하는 함수
-
+```python
 def extract_frames(video_path, output_folder, frame_count=5):
     cap = cv2.VideoCapture(video_path)
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -39,7 +39,7 @@ def extract_frames(video_path, output_folder, frame_count=5):
 
     cap.release()
     return saved_frames
-
+```
 # 프레임 이미지를 리사이즈하는 함수
 def resize_image(image_path, output_size=(64, 64)):
     with Image.open(image_path) as img:
