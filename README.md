@@ -95,6 +95,7 @@ from PIL import Image
 # ------------------------------
 # 1. 설정
 # ------------------------------
+```
 data_folder = 'deepfake_dataset'  # 데이터셋이 있는 기본 폴더
 train_folder = 'dataset/train'   # 학습 데이터 저장 폴더
 val_folder = 'dataset/val'       # 검증 데이터 저장 폴더
@@ -104,10 +105,12 @@ image_size = (64, 64)            # 리사이즈 이미지 크기
 batch_size = 16                  # 배치 크기
 num_epochs = 10                  # 학습 에폭 수
 learning_rate = 0.001            # 학습률
+```
 
 # ------------------------------
 # 2. 데이터 준비 함수
 # ------------------------------
+```
 def extract_frames_from_videos(data_folder, output_folder, frame_count, image_size):
     """
     각 클래스 폴더('real', 'fake')에서 영상 파일을 읽고 일정 수의 프레임을 추출.
@@ -167,10 +170,12 @@ def split_dataset(input_folder, train_folder, val_folder, split_ratio):
 
         for file in val_files:
             shutil.copy(os.path.join(class_path, file), val_class_folder)
+```
 
 # ------------------------------
 # 3. 모델 정의 및 학습
 # ------------------------------
+```
 def train_model(model, train_loader, criterion, optimizer, num_epochs):
     """
     모델 학습 루프.
@@ -207,11 +212,13 @@ def validate_model(model, val_loader, criterion):
     val_loss = running_loss / len(val_loader.dataset)
     accuracy = correct / len(val_loader.dataset)
     print(f"Validation Loss: {val_loss:.4f}, Accuracy: {accuracy:.4f}")
+```
 
 # ------------------------------
 # 4. 실행
 # ------------------------------
 # 데이터 준비
+```
 frames_folder = 'processed_frames'
 extract_frames_from_videos(data_folder, frames_folder, frame_count, image_size)
 split_dataset(frames_folder, train_folder, val_folder, split_ratio)
@@ -238,3 +245,4 @@ optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 # 학습 및 검증
 train_model(model, train_loader, criterion, optimizer, num_epochs)
 validate_model(model, val_loader, criterion)
+```
