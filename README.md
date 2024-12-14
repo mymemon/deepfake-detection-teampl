@@ -222,7 +222,7 @@ def validate_model(model, val_loader, criterion):
 # ------------------------------
 # 4. 실행
 # ------------------------------
-# 데이터 준비
+## 데이터 준비
 ```
 frames_folder = 'processed_frames'   # 추출된 프레임 저장 폴더
 extract_frames_from_videos(data_folder, frames_folder, frame_count, image_size)   # 프레임 추출
