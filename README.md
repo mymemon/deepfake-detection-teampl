@@ -79,7 +79,7 @@ for frame_file in os.listdir(output_folder):
 
 
 ----------------------------------------------------------------------------------------------------------
-
+```
 import os
 import cv2
 import random
@@ -90,6 +90,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torch
 from PIL import Image
+```
 
 # ------------------------------
 # 1. 설정
