@@ -127,7 +127,7 @@ def train_model(model, train_loader, criterion, optimizer, num_epochs):
             loss = criterion(outputs, labels)  # 손실 계산
             loss.backward()  # 그래디언트 계산
             optimizer.step()  # 모델 파라미터 업데이트
-            running_loss += loss.item() * images.size(0)  # 배치 손실 합산
+            running_loss += loss.item() * images.size(2)  # 배치 손실 합산
 
         epoch_loss = running_loss / len(train_loader.dataset)  # 평균 손실 계산
         print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {epoch_loss:.4f}")  # 에폭 결과 출력
